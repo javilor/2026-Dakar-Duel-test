@@ -14,7 +14,7 @@
         
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #C2390E;
             color: #333;
             padding: 20px;
             min-height: 100vh;
@@ -43,7 +43,7 @@
         }
         
         .leaderboard h2 {
-            color: #667eea;
+            color: #C2390E;
             margin-bottom: 20px;
             font-size: 1.5em;
         }
@@ -51,14 +51,14 @@
         .player-score {
             margin-bottom: 20px;
             padding: 15px;
-            background: #f8f9fa;
+            background: #C2390E;
             border-radius: 10px;
             border-left: 5px solid #667eea;
         }
         
         .player-score.winner {
-            border-left-color: #ffd700;
-            background: #fffef0;
+            border-left-color: #C2390E;
+            background: #ffe2d9;
         }
         
         .player-name {
@@ -69,13 +69,13 @@
         
         .score-display {
             font-size: 2em;
-            color: #667eea;
+            color: #000000;
             font-weight: bold;
         }
         
         .progress-bar {
             height: 30px;
-            background: #e0e0e0;
+            background: #FFDA00;
             border-radius: 15px;
             overflow: hidden;
             margin-top: 10px;
@@ -83,7 +83,7 @@
         
         .progress-fill {
             height: 100%;
-            background: linear-gradient(90deg, #667eea, #764ba2);
+            background: #FFDA00);
             transition: width 1s ease;
             display: flex;
             align-items: center;
@@ -103,7 +103,7 @@
         }
         
         .stage-section h2 {
-            color: #667eea;
+            color: #000000;
             margin-bottom: 20px;
         }
         
@@ -114,34 +114,34 @@
         }
         
         .stage-card {
-            background: #f8f9fa;
+            background: ##fff9d4;
             padding: 15px;
             border-radius: 10px;
             text-align: center;
-            border: 2px solid #e0e0e0;
+            border: 2px solid #FFDA00;
             transition: transform 0.2s;
         }
         
         .stage-card:hover {
             transform: translateY(-5px);
-            border-color: #667eea;
+            border-color: #FFDA00;
         }
         
         .stage-card.completed {
-            background: #e8f5e9;
-            border-color: #4caf50;
+            background: #ffe2d9;
+            border-color: #C2390E;
         }
         
         .stage-number {
             font-size: 1.2em;
             font-weight: bold;
-            color: #667eea;
+            color: #000000;
             margin-bottom: 10px;
         }
         
         .stage-scores {
             font-size: 0.9em;
-            color: #666;
+            color: #000000;
         }
         
         /* ===== TEAM OVERVIEW SECTION ===== */
@@ -160,7 +160,7 @@
         }
         
         .team-card h2 {
-            color: #667eea;
+            color: #000000;
             margin-bottom: 20px;
             font-size: 1.3em;
         }
@@ -170,10 +170,10 @@
         }
         
         .category h3 {
-            color: #764ba2;
+            color: #C2390E;
             font-size: 1.1em;
             margin-bottom: 10px;
-            border-bottom: 2px solid #764ba2;
+            border-bottom: 2px solid #C2390E;
             padding-bottom: 5px;
         }
         
@@ -182,7 +182,7 @@
             margin: 8px 0;
             background: #f8f9fa;
             border-radius: 8px;
-            border-left: 4px solid #667eea;
+            border-left: 4px solid #C2390E;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -233,7 +233,7 @@
         }
         
         .strategic-section h2 {
-            color: #667eea;
+            color: #C2390E;
             margin-bottom: 20px;
         }
         
@@ -259,17 +259,17 @@
         }
         
         .badge-captain {
-            background: #2196f3;
+            background: #FFDA00;
             color: white;
         }
         
         .badge-joker {
-            background: #ffd700;
+            background: #fff9d4;
             color: #333;
         }
         
         .badge-used {
-            background: #e0e0e0;
+            background: #000000;
             color: #999;
             text-decoration: line-through;
         }
@@ -304,11 +304,6 @@
 <body>
     <div class="container">
         <h1>🏁 Dakar Duel 2026 Dashboard</h1>
-        
-        <!-- Update Instructions -->
-        <div class="update-note">
-            <strong>📝 To Update:</strong> Right-click this page → "View Page Source" → Edit the data in the JavaScript section at the bottom
-        </div>
         
         <!-- LEADERBOARD -->
         <div class="leaderboard">
