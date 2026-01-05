@@ -92,6 +92,38 @@
             color: white;
             font-weight: bold;
         }
+
+/* ===== HISTORIC RESULTS SECTION ===== */
+.historic-results {
+    background: white;
+    border-radius: 15px;
+    padding: 25px;
+    margin-bottom: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.historic-results h2 {
+    color: #000000;
+    margin-bottom: 20px;
+}
+
+.historic-results table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.historic-results th, .historic-results td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+}
+
+.historic-results th {
+    background-color: #f8f9fa;
+}
+
+
+
         
         /* ===== STAGE RESULTS SECTION ===== */
         .stage-section {
@@ -303,13 +335,19 @@
 </head>
 <body>
     <div class="container">
-        <h1>🏁 Dakar Duel 2026 Dashboard</h1>
+        <h1>🏁 Dakar Duel 2026 Dashboard 🏁</h1>
         
         <!-- LEADERBOARD -->
         <div class="leaderboard">
             <h2>🏆 Current Standings</h2>
             <div id="leaderboard-content"></div>
         </div>
+
+           <!-- HISTORIC RESULTS SECTION -->
+<div class="historic-results">
+    <h2>📈 Historic Results</h2>
+    <div id="historic-results-content"></div>
+</div>
         
         <!-- STAGE RESULTS -->
         <div class="stage-section">
@@ -463,7 +501,54 @@
             });
         });
     }
+// Historic score function
+        
+function renderHistoricResults() {
+    const container = document.getElementById('historic-results-content');
+    let html = '<table><tr><th>Competitor</th><th>Stage 1</th><th>Stage 2</th><th>Stage 3</th><th>Stage 4</th><th>Stage 5</th><th>Stage 6</th><th>Stage 7</th><th>Stage 8</th><th>Stage 9</th><th>Stage 10</th></tr>';
 
+    const competitors = {};
+    
+    // Collect results for each competitor
+    gameData.players.forEach(player => {
+        const allCompetitors = [...player.moto.primary, player.moto.replacement, ...player.cars.primary, player.cars.replacement];
+        allCompetitors.forEach(comp => {
+            if (!competitors[comp]) {
+                competitors[comp] = { name: comp, scores: Array(10).fill('-') }; // Initialize with '-'
+            }
+        });
+    });
+
+    // Populate scores based on stage results
+    for (let stage = 1; stage <= 10; stage++) {
+        const results = gameData.stageResults[stage];
+        if (results) {
+            for (const category in results) {
+                for (const competitor in results[category]) {
+                    const position = results[category][competitor];
+                    const index = position > 10 ? 10 : position - 1; // Adjust index for display
+                    if (competitors[competitor]) {
+                        competitors[competitor].scores[stage - 1] = position; // Store position for the given stage
+                    }
+                }
+            }
+        }
+    }
+
+    // Build the HTML for the table
+    for (const competitor in competitors) {
+        html += `<tr><td>${competitors[competitor].name}</td>`;
+        competitors[competitor].scores.forEach(score => {
+            html += `<td>${score}</td>`;
+        });
+        html += '</tr>';
+    }
+
+    html += '</table>';
+    container.innerHTML = html;
+}
+
+        
     // Captain bonuses
     player.captains.forEach(cap => {
         total += cap.earned || 0;
@@ -654,6 +739,7 @@
         renderStageGrid();
         renderStrategySection();
         renderTeamOverview();
+        renderHistoricResults(); 
     }
     
     // Run on page load
