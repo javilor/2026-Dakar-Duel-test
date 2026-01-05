@@ -93,37 +93,34 @@
             font-weight: bold;
         }
 
-/* ===== HISTORIC RESULTS SECTION ===== */
-.historic-results {
-    background: white;
-    border-radius: 15px;
-    padding: 25px;
-    margin-bottom: 20px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-}
+        /* ===== HISTORIC RESULTS SECTION ===== */
+        .historic-results {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
 
-.historic-results h2 {
-    color: #000000;
-    margin-bottom: 20px;
-}
+        .historic-results h2 {
+            color: #000000;
+            margin-bottom: 20px;
+        }
 
-.historic-results table {
-    width: 100%;
-    border-collapse: collapse;
-}
+        .historic-results table {
+            width: 100%;
+            border-collapse: collapse;
+        }
 
-.historic-results th, .historic-results td {
-    border: 1px solid #ddd;
-    padding: 10px;
-    text-align: center;
-}
+        .historic-results th, .historic-results td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
 
-.historic-results th {
-    background-color: #f8f9fa;
-}
-
-
-
+        .historic-results th {
+            background-color: #f8f9fa;
+        }
         
         /* ===== STAGE RESULTS SECTION ===== */
         .stage-section {
@@ -343,11 +340,11 @@
             <div id="leaderboard-content"></div>
         </div>
 
-           <!-- HISTORIC RESULTS SECTION -->
-<div class="historic-results">
-    <h2>📈 Historic Results</h2>
-    <div id="historic-results-content"></div>
-</div>
+        <!-- HISTORIC RESULTS SECTION -->
+        <div class="historic-results">
+            <h2>📈 Historic Results</h2>
+            <div id="historic-results-content"></div>
+        </div>
         
         <!-- STAGE RESULTS -->
         <div class="stage-section">
@@ -370,18 +367,16 @@
 
 <script>
     // ===== DATA CONFIGURATION =====
-    // Edit this section to update your league data
-    
     const gameData = {
         players: [
             {
                 name: "Javier Yagüe",
-                totalScore: 0, // Will be auto-calculated
+                totalScore: 0,
                 moto: {
                     primary: ["Canet", "Shareina", "Branch"],
                     replacement: "Docherty",
-                    emergency: null, // Set name if activated
-                    active: ["Canet", "Shareina", "Branch"] // Update as replacements happen
+                    emergency: null,
+                    active: ["Canet", "Shareina", "Branch"]
                 },
                 cars: {
                     primary: ["Guthrie", "Ekstrom", "Sainz"],
@@ -391,9 +386,8 @@
                 },
                 captains: [
                     {stage: 2, competitor: "Canet", category: "motos", earned: 0} 
-                ], 
-                
-                jokerUsed: null, // {stage: 5, competitor: "Guthrie", category: "cars"}
+                ],
+                jokerUsed: null,
                 emergencyPenalty: 0
             },
             {
@@ -412,30 +406,29 @@
                     active: ["Loeb", "Roma", "Price"]
                 },
                 captains: [
-                     {stage: 2, competitor: "Shareina", category: "motos", earned: 0} 
+                    {stage: 2, competitor: "Shareina", category: "motos", earned: 0} 
                 ],
                 jokerUsed: null,
                 emergencyPenalty: 0
             }
         ],
         
-        // ⭐ Stage results: Add actual positions after each stage
         stageResults: {
             1: {
                 moto: {
                     "Canet": 2,
-                    "Shareina": 5,  // Note: Shareina appears in BOTH teams
+                    "Shareina": 5,
                     "Branch": 7,
                     "Bravec": 3,
                     "Benavides": 9,
-                    "Docherty": 8,  // Add even if not active
+                    "Docherty": 8,
                     "Sanders": 1
                 },
                 cars: {
                     "Guthrie": 12,
                     "Ekstrom": 13,
                     "Sainz": 16,
-                    "Loeb": 7,  // Note: Loeb is in BOTH as primary AND replacement
+                    "Loeb": 7,
                     "Roma": 17,
                     "Price": 4,
                     "Sanz": 21
@@ -443,16 +436,14 @@
             }
         },
         
-        currentStage: 1, // Update to current stage number (0-10)
+        currentStage: 1,
         
-        // Final overall positions (after stage 10)
         finalPositions: {
-            moto: {}, // {"Canet": 1, "Shareina": 5, ...}
-            cars: {}  // {"Driver X": 2, ...}
+            moto: {},
+            cars: {}
         }
     };
     
-    // ===== SCORING LOGIC =====
     const pointsTable = {
         1: 100, 2: 90, 3: 80, 4: 70, 5: 60,
         6: 50, 7: 40, 8: 30, 9: 20, 10: 10
@@ -473,109 +464,91 @@
     }
     
     function calculateTotalScore(player) {
-    let total = 0;
+        let total = 0;
 
-    // Stage points
-    for (let stage in gameData.stageResults) {
-        const results = gameData.stageResults[stage];
+        for (let stage in gameData.stageResults) {
+            const results = gameData.stageResults[stage];
 
-        // Check each category
+            ['moto', 'cars'].forEach(category => {
+                player[category].active.forEach(competitor => {
+                    if (results[category] && results[category][competitor]) {
+                        const position = results[category][competitor];
+                        const isJoker = player.jokerUsed && 
+                                        player.jokerUsed.stage == stage && 
+                                        player.jokerUsed.competitor === competitor;
+
+                        const isReplacement = competitor === player[category].replacement;
+
+                        if (!isReplacement) {
+                            total += calculateStagePoints(position, isJoker);
+                        }
+                    }
+                });
+            });
+        }
+
+        player.captains.forEach(cap => {
+            total += cap.earned || 0;
+        });
+
         ['moto', 'cars'].forEach(category => {
             player[category].active.forEach(competitor => {
-                if (results[category] && results[category][competitor]) {
-                    const position = results[category][competitor];
-
-                    // Check if this was a joker play
-                    const isJoker = player.jokerUsed && 
-                                    player.jokerUsed.stage == stage && 
-                                    player.jokerUsed.competitor === competitor;
-
-                    // Check if competitor is a replacement
-                    const isReplacement = competitor === player[category].replacement;
-
-                    // Only add points if the competitor is not a replacement
-                    if (!isReplacement) {
-                        total += calculateStagePoints(position, isJoker);
+                if (competitor !== player[category].emergency && competitor !== player[category].replacement) {
+                    const finalPos = gameData.finalPositions[category][competitor];
+                    if (finalPos && podiumBonus[finalPos]) {
+                        total += podiumBonus[finalPos];
                     }
                 }
             });
         });
+
+        total -= player.emergencyPenalty;
+
+        return total;
     }
-// Historic score function
+
+    function renderHistoricResults() {
+        const container = document.getElementById('historic-results-content');
+        let html = '<table><tr><th>Competitor</th><th>Stage 1</th><th>Stage 2</th><th>Stage 3</th><th>Stage 4</th><th>Stage 5</th><th>Stage 6</th><th>Stage 7</th><th>Stage 8</th><th>Stage 9</th><th>Stage 10</th></tr>';
+
+        const competitors = {};
         
-function renderHistoricResults() {
-    const container = document.getElementById('historic-results-content');
-    let html = '<table><tr><th>Competitor</th><th>Stage 1</th><th>Stage 2</th><th>Stage 3</th><th>Stage 4</th><th>Stage 5</th><th>Stage 6</th><th>Stage 7</th><th>Stage 8</th><th>Stage 9</th><th>Stage 10</th></tr>';
-
-    const competitors = {};
-    
-    // Collect results for each competitor
-    gameData.players.forEach(player => {
-        const allCompetitors = [...player.moto.primary, player.moto.replacement, ...player.cars.primary, player.cars.replacement];
-        allCompetitors.forEach(comp => {
-            if (!competitors[comp]) {
-                competitors[comp] = { name: comp, scores: Array(10).fill('-') }; // Initialize with '-'
-            }
+        gameData.players.forEach(player => {
+            const allCompetitors = [...player.moto.primary, player.moto.replacement, ...player.cars.primary, player.cars.replacement];
+            allCompetitors.forEach(comp => {
+                if (!competitors[comp]) {
+                    competitors[comp] = { name: comp, scores: Array(10).fill('-') }; 
+                }
+            });
         });
-    });
 
-    // Populate scores based on stage results
-    for (let stage = 1; stage <= 10; stage++) {
-        const results = gameData.stageResults[stage];
-        if (results) {
-            for (const category in results) {
-                for (const competitor in results[category]) {
-                    const position = results[category][competitor];
-                    const index = position > 10 ? 10 : position - 1; // Adjust index for display
-                    if (competitors[competitor]) {
-                        competitors[competitor].scores[stage - 1] = position; // Store position for the given stage
+        for (let stage = 1; stage <= 10; stage++) {
+            const results = gameData.stageResults[stage];
+            if (results) {
+                for (const category in results) {
+                    for (const competitor in results[category]) {
+                        const position = results[category][competitor];
+                        const index = position > 10 ? 10 : position - 1; 
+                        if (competitors[competitor]) {
+                            competitors[competitor].scores[stage - 1] = position; 
+                        }
                     }
                 }
             }
         }
+
+        for (const competitor in competitors) {
+            html += `<tr><td>${competitors[competitor].name}</td>`;
+            competitors[competitor].scores.forEach(score => {
+                html += `<td>${score}</td>`;
+            });
+            html += '</tr>';
+        }
+
+        html += '</table>';
+        container.innerHTML = html;
     }
 
-    // Build the HTML for the table
-    for (const competitor in competitors) {
-        html += `<tr><td>${competitors[competitor].name}</td>`;
-        competitors[competitor].scores.forEach(score => {
-            html += `<td>${score}</td>`;
-        });
-        html += '</tr>';
-    }
-
-    html += '</table>';
-    container.innerHTML = html;
-}
-
-        
-    // Captain bonuses
-    player.captains.forEach(cap => {
-        total += cap.earned || 0;
-    });
-
-    // Final podium bonuses
-    ['moto', 'cars'].forEach(category => {
-        player[category].active.forEach(competitor => {
-            // Don't give bonus to emergency picks
-            if (competitor !== player[category].emergency && competitor !== player[category].replacement) {
-                const finalPos = gameData.finalPositions[category][competitor];
-                if (finalPos && podiumBonus[finalPos]) {
-                    total += podiumBonus[finalPos];
-                }
-            }
-        });
-    });
-
-    // Emergency penalty
-    total -= player.emergencyPenalty;
-
-    return total;
-}
-
-    
-    // ===== RENDER FUNCTIONS =====
-    
     function renderLeaderboard() {
         const container = document.getElementById('leaderboard-content');
         const players = gameData.players.map(p => ({
@@ -604,149 +577,4 @@ function renderHistoricResults() {
         const container = document.getElementById('stage-grid');
         let html = '';
         
-        for (let i = 1; i <= 10; i++) {
-            const completed = gameData.stageResults[i] !== undefined;
-            const player1Score = completed ? calculateStageScore(gameData.players[0], i) : '-';
-            const player2Score = completed ? calculateStageScore(gameData.players[1], i) : '-';
-            
-            html += `
-                <div class="stage-card ${completed ? 'completed' : ''}">
-                    <div class="stage-number">Stage ${i}</div>
-                    <div class="stage-scores">
-                        <div>${gameData.players[0].name}: ${player1Score}</div>
-                        <div>${gameData.players[1].name}: ${player2Score}</div>
-                    </div>
-                </div>
-            `;
-        }
-        
-        container.innerHTML = html;
-    }
-    
-    function calculateStageScore(player, stage) {
-        const results = gameData.stageResults[stage];
-        if (!results) return 0;
-        
-        let total = 0;
-        
-        ['moto', 'cars'].forEach(category => {
-            player[category].active.forEach(competitor => {
-                if (results[category] && results[category][competitor]) {
-                    const position = results[category][competitor];
-                    const isJoker = player.jokerUsed && 
-                                  player.jokerUsed.stage == stage && 
-                                  player.jokerUsed.competitor === competitor;
-                    total += calculateStagePoints(position, isJoker);
-                }
-            });
-        });
-        
-        // Add captain bonus
-        const captainForStage = player.captains.find(c => c.stage == stage);
-        if (captainForStage) {
-            total += captainForStage.earned || 0;
-        }
-        
-        return total;
-    }
-    
-    function renderStrategySection() {
-        const container = document.getElementById('strategy-grid');
-        
-        container.innerHTML = gameData.players.map(player => `
-            <div class="strategy-card">
-                <h3>${player.name}</h3>
-                <div>
-                    <strong>Captains Used:</strong><br>
-                    ${player.captains.map(c => 
-                        `<span class="badge badge-captain">S${c.stage}: ${c.competitor} (+${c.earned})</span>`
-                    ).join('') || '<em>None yet</em>'}
-                </div>
-                <div style="margin-top: 10px;">
-                    <strong>Joker:</strong><br>
-                    ${player.jokerUsed ? 
-                        `<span class="badge badge-joker">S${player.jokerUsed.stage}: ${player.jokerUsed.competitor}</span>` : 
-                        '<span class="badge badge-captain">Available</span>'
-                    }
-                </div>
-            </div>
-        `).join('');
-    }
-    
-    function renderTeamOverview() {
-        gameData.players.forEach((player, index) => {
-            const container = document.getElementById(`team${index + 1}-overview`);
-            
-            container.innerHTML = `
-                <h2>${player.name}'s Team</h2>
-                
-                <div class="category">
-                    <h3>🏍️ Moto</h3>
-                    ${renderCompetitors(player.moto, 'moto')}
-                </div>
-                
-                <div class="category">
-                    <h3>🚗 Cars</h3>
-                    ${renderCompetitors(player.cars, 'cars')}
-                </div>
-            `;
-        });
-    }
-    
-    function renderCompetitors(category, type) {
-        let html = '';
-        
-        // Primary competitors
-        category.primary.forEach(comp => {
-            const isActive = category.active.includes(comp);
-            html += `
-                <div class="competitor">
-                    <span class="competitor-name">${comp}</span>
-                    <span class="competitor-status ${isActive ? 'status-active' : 'status-replaced'}">
-                        ${isActive ? 'Active' : 'Replaced'}
-                    </span>
-                </div>
-            `;
-        });
-        
-        // Replacement
-        const replacementActive = category.active.includes(category.replacement);
-        html += `
-            <div class="competitor replacement">
-                <span class="competitor-name">🔄 ${category.replacement}</span>
-                <span class="competitor-status ${replacementActive ? 'status-active' : ''}">
-                    ${replacementActive ? 'Active' : 'Standby'}
-                </span>
-            </div>
-        `;
-        
-        // Emergency pick
-        if (category.emergency) {
-            html += `
-                <div class="competitor emergency">
-                    <span class="competitor-name">🚨 ${category.emergency}</span>
-                    <span class="competitor-status status-emergency">Emergency (-100)</span>
-                </div>
-            `;
-        }
-        
-        return html;
-    }
-    
-    // ===== INITIALIZE DASHBOARD =====
-    function init() {
-        renderLeaderboard();
-        renderStageGrid();
-        renderStrategySection();
-        renderTeamOverview();
-        renderHistoricResults(); 
-    }
-    
-    // Run on page load
-    init();
-    
-    // Auto-refresh every 30 seconds (optional)
-    // setInterval(init, 30000);
-</script>
-</body>
-</html>
+        for (let i = 1; i <= 10; i++) {*
