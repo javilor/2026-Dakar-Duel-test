@@ -509,46 +509,50 @@
     }
 
     function renderHistoricResults() {
-        const container = document.getElementById('historic-results-content');
-        let html = '<table><tr><th>Competitor</th><th>Stage 1</th><th>Stage 2</th><th>Stage 3</th><th>Stage 4</th><th>Stage 5</th><th>Stage 6</th><th>Stage 7</th><th>Stage 8</th><th>Stage 9</th><th>Stage 10</th></tr>';
+    const container = document.getElementById('historic-results-content');
+    let html = '<table><tr><th>Competitor</th><th>Stage 1</th><th>Stage 2</th><th>Stage 3</th><th>Stage 4</th><th>Stage 5</th><th>Stage 6</th><th>Stage 7</th><th>Stage 8</th><th>Stage 9</th><th>Stage 10</th></tr>';
 
-        const competitors = {};
-        
-        gameData.players.forEach(player => {
-            const allCompetitors = [...player.moto.primary, player.moto.replacement, ...player.cars.primary, player.cars.replacement];
-            allCompetitors.forEach(comp => {
-                if (!competitors[comp]) {
-                    competitors[comp] = { name: comp, scores: Array(10).fill('-') }; 
-                }
-            });
+    const competitors = {};
+
+    // Initialize competitors with empty scores
+    gameData.players.forEach(player => {
+        const allCompetitors = [...player.moto.primary, player.moto.replacement, ...player.cars.primary, player.cars.replacement];
+        allCompetitors.forEach(comp => {
+            if (!competitors[comp]) {
+                competitors[comp] = { name: comp, scores: Array(10).fill(0) }; // Initialize with 0 points
+            }
         });
+    });
 
-        for (let stage = 1; stage <= 10; stage++) {
-            const results = gameData.stageResults[stage];
-            if (results) {
-                for (const category in results) {
-                    for (const competitor in results[category]) {
-                        const position = results[category][competitor];
-                        const index = position > 10 ? 10 : position - 1; 
-                        if (competitors[competitor]) {
-                            competitors[competitor].scores[stage - 1] = position; 
-                        }
+    // Populate scores based on stage results
+    for (let stage = 1; stage <= 10; stage++) {
+        const results = gameData.stageResults[stage];
+        if (results) {
+            for (const category in results) {
+                for (const competitor in results[category]) {
+                    const position = results[category][competitor];
+                    const points = calculateStagePoints(position); // Calculate points based on position
+                    if (competitors[competitor]) {
+                        competitors[competitor].scores[stage - 1] = points; // Store points for the given stage
                     }
                 }
             }
         }
-
-        for (const competitor in competitors) {
-            html += `<tr><td>${competitors[competitor].name}</td>`;
-            competitors[competitor].scores.forEach(score => {
-                html += `<td>${score}</td>`;
-            });
-            html += '</tr>';
-        }
-
-        html += '</table>';
-        container.innerHTML = html;
     }
+
+    // Build the HTML for the table
+    for (const competitor in competitors) {
+        html += `<tr><td>${competitors[competitor].name}</td>`;
+        competitors[competitor].scores.forEach(score => {
+            html += `<td>${score}</td>`;
+        });
+        html += '</tr>';
+    }
+
+    html += '</table>';
+    container.innerHTML = html;
+}
+
 
     function renderLeaderboard() {
         const container = document.getElementById('leaderboard-content');
